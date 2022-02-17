@@ -35,4 +35,8 @@ Tente seguir com disciplina, criando primeiro um teste que falha, depois fazendo
 
 [Como funciona o algoritmo do CPF?](http://www.macoratti.net/alg_cpf.htm)
 
+## Repositorios com versão codificada em aula
+
+[github aula 1](https://github.com/rodrigobranas/cccat5_1)
+
 ----
