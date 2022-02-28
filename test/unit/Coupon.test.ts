@@ -1,4 +1,4 @@
-import Coupon from "../src/Coupon";
+import Coupon from "../../src/domain/entity/Coupon";
 
 test("Deve criar um cupom válido", function () {
     const coupon = new Coupon("MAX20", 20);
