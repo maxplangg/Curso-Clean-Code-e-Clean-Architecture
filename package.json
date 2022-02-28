@@ -6,6 +6,7 @@
   "scripts": {
     "build": "tsc",
     "test": "tsc && jest dist/",
+    "watchAll": "tsc && jest dist/ --watchAll",
     "coverage": "tsc && jest ./dist --coverage",
     "tsc:init": "tsc --init"
   },

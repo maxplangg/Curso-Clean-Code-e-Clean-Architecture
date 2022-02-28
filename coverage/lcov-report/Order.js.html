@@ -25,14 +25,14 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>16/16</span>
+                <span class='fraction'>22/22</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">88.88% </span>
+                <span class="strong">91.66% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>8/9</span>
+                <span class='fraction'>11/12</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>16/16</span>
+                <span class='fraction'>22/22</span>
             </div>
         
             
@@ -93,33 +93,47 @@
 <a name='L28'></a><a href='#L28'>28</a>
 <a name='L29'></a><a href='#L29'>29</a>
 <a name='L30'></a><a href='#L30'>30</a>
-<a name='L31'></a><a href='#L31'>31</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L31'></a><a href='#L31'>31</a>
+<a name='L32'></a><a href='#L32'>32</a>
+<a name='L33'></a><a href='#L33'>33</a>
+<a name='L34'></a><a href='#L34'>34</a>
+<a name='L35'></a><a href='#L35'>35</a>
+<a name='L36'></a><a href='#L36'>36</a>
+<a name='L37'></a><a href='#L37'>37</a>
+<a name='L38'></a><a href='#L38'>38</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">6x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">13x</span>
+<span class="cline-any cline-yes">13x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">13x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
@@ -129,17 +143,23 @@ var __importDefault = (this &amp;&amp; this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const Cpf_1 = __importDefault(require("./Cpf"));
+const Freight_1 = __importDefault(require("./Freight"));
 const OrderItem_1 = __importDefault(require("./OrderItem"));
 class Order {
-    constructor(cpf) {
+    constructor(cpf, issueDate = new Date()) {
+        this.issueDate = issueDate;
         this.cpf = new Cpf_1.default(cpf);
         this.orderItems = [];
+        this.freight = new Freight_1.default();
     }
     addItem(item, quantity) {
+        this.freight.addItem(item, quantity);
         this.orderItems.push(new OrderItem_1.default(item.idItem, item.price, quantity));
     }
     addCoupon(coupon) {
-        this.coupon = coupon;
+        if (!coupon.isExpired(this.issueDate)) {
+            this.coupon = coupon;
+        }
     }
     getTotal() {
         let total = 0;
@@ -147,8 +167,9 @@ class Order {
             total += orderItem.getTotal();
         }
         if (this.coupon) {
-            total -= ((total * this.coupon.percentage) / 100);
+            total -= this.coupon.calculateDiscount(total);
         }
+        total += this.freight.getTotal();
         return total;
     }
 }
@@ -160,7 +181,7 @@ exports.default = Order;
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at Thu Feb 17 2022 14:05:29 GMT-0300 (Horário Padrão de Brasília)
+                at Mon Feb 28 2022 17:23:58 GMT-0300 (Horário Padrão de Brasília)
             </div>
         <script src="prettify.js"></script>
         <script>
